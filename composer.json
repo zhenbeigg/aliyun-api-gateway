@@ -1,0 +1,22 @@
+{
+    "name": "eykj/aliyun-api-gateway",
+    "description": "一一科技API网关组件",
+    "license": "MIT",
+    "keywords": [
+        "eykj",
+        "swoole",
+        "hyperf",
+        "aliyun",
+        "apigateway"
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Eykj\\AliyunApiGateway\\": "src/"
+        },
+        "files": []
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
