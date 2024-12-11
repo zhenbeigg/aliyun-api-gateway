@@ -19,10 +19,19 @@ use function Hyperf\Support\env;
  */
 class Service
 {
-    private static $appKey = env('HAIGUI_APP_KEY', '');
-    private static $appSecret = env('HAIGUI_APP_SECRET', '');
+    private $appKey = "your appKey";
+    private $appSecret = "your appSecret";
     //协议(http或https)://域名:端口，注意必须有http://或https://
-    private static $host = env('HAIGUI_HOST', 'https://api-dev.hpzn.vip');
+    private $host = "http://test.alicloudapi.com";
+    /**
+     * 构造方法初始化配置参数
+     */
+    public function __construct($appKey, $appSecret, $host)
+    {
+        $this->appKey = $appKey;
+        $this->appSecret = $appSecret;
+        $this->host = $host;
+    }
 
     /**
      * 获取请求实例
@@ -222,9 +231,9 @@ class Service
     /**
      *method=DELETE请求示例
      */
-    public function doDelete()
+    public function doDelete($path, array $headers, array $querys, $debug = false)
     {
-        $request = new HttpRequest($this::$host, $path, HttpMethod::DELETE, $this::$appKey, $this::$appSecret);
+        $request =  $this->request($path, HttpMethod::DELETE);
 
         //设定Content-Type，根据服务器端接受的值来设置
         $request->setHeader(HttpHeader::HTTP_HEADER_CONTENT_TYPE, ContentType::CONTENT_TYPE_TEXT);
@@ -232,36 +241,37 @@ class Service
         //设定Accept，根据服务器端接受的值来设置
         $request->setHeader(HttpHeader::HTTP_HEADER_ACCEPT, ContentType::CONTENT_TYPE_TEXT);
         //如果是调用测试环境请设置
-        //$request->setHeader(SystemHeader::X_CA_STAG, "TEST");
+        $debug && $request->setHeader(SystemHeader::X_CA_STAG, "TEST");
 
 
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
-        $request->setHeader("b-header2", "headervalue2");
-        $request->setHeader("a-header1", "headervalue1");
+        if (is_array($headers)) {
+            foreach ($headers as $key => $node) {
+                $request->setHeader($key, $node);
+                //指定参与签名的header
+                $request->setSignHeader($key);
+            }
+        }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        $request->setQuery("b-query2", "queryvalue2");
-        $request->setQuery("a-query1", "queryvalue1");
+        if ((is_array($querys))) {
+            foreach ($querys as $key => $node) {
+                $request->setQuery($key, $node);
+            }
+        }
 
-        //指定参与签名的header
-        $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        $request->setSignHeader("a-header1");
-        $request->setSignHeader("b-header2");
-
-        $response = HttpClient::execute($request);
-        print_r($response);
+        return HttpClient::execute($request);
     }
 
 
     /**
      *method=HEAD请求示例
      */
-    public function doHead()
+    public function doHead($path, array $headers, array $querys, $debug = false)
     {
         //域名后、query前的部分
-        $path = "/head";
-        $request = new HttpRequest($this::$host, $path, HttpMethod::HEAD, $this::$appKey, $this::$appSecret);
+        $request =  $this->request($path, HttpMethod::HEAD);
 
         //设定Content-Type，根据服务器端接受的值来设置
         $request->setHeader(HttpHeader::HTTP_HEADER_CONTENT_TYPE, ContentType::CONTENT_TYPE_TEXT);
@@ -269,24 +279,26 @@ class Service
         //设定Accept，根据服务器端接受的值来设置
         $request->setHeader(HttpHeader::HTTP_HEADER_ACCEPT, ContentType::CONTENT_TYPE_TEXT);
         //如果是调用测试环境请设置
-        //$request->setHeader(SystemHeader::X_CA_STAG, "TEST");
+        $debug && $request->setHeader(SystemHeader::X_CA_STAG, "TEST");
 
 
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
-        $request->setHeader("b-header2", "headervalue2");
-        $request->setHeader("a-header1", "headervalue1");
+        if (is_array($headers)) {
+            foreach ($headers as $key => $node) {
+                $request->setHeader($key, $node);
+                //指定参与签名的header
+                $request->setSignHeader($key);
+            }
+        }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        $request->setQuery("b-query2", "queryvalue2");
-        $request->setQuery("a-query1", "queryvalue1");
+        if ((is_array($querys))) {
+            foreach ($querys as $key => $node) {
+                $request->setQuery($key, $node);
+            }
+        }
 
-        //指定参与签名的header
-        $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        $request->setSignHeader("a-header1");
-        $request->setSignHeader("b-header2");
-
-        $response = HttpClient::execute($request);
-        print_r($response);
+        return HttpClient::execute($request);
     }
 }
