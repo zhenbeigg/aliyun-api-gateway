@@ -20,7 +20,11 @@
 
 namespace Eykj\AliyunApiGateway\Http;
 
-class HttpResponse
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+
+class HttpResponse implements ResponseInterface
 {
     private $content;
     private $body;
@@ -29,6 +33,9 @@ class HttpResponse
     private $errorMessage;
     private $contentType;
     private $httpStatusCode;
+    private $protocolVersion = '1.1';
+    private $reasonPhrase = '';
+    private $headers = [];
 
     public function getContent()
     {
@@ -45,7 +52,7 @@ class HttpResponse
         $this->header = $header;
     }
 
-    public function getHeader()
+    public function getHeader(string $name = '')
     {
         return $this->header;
     }
@@ -55,10 +62,11 @@ class HttpResponse
         $this->body = $body;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
-        return $this->body;
+        return new SwooleStream((string)$this->body);
     }
+
 
     public function getRequestId()
     {
@@ -129,4 +137,72 @@ class HttpResponse
             }
         }
     }
+
+    public function getStatusCode(): int
+    {
+        return $this->httpStatusCode;
+    }
+
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
+    {
+        $new = clone $this;
+        $new->httpStatusCode = $code;
+        $new->reasonPhrase = $reasonPhrase;
+        return $new;
+    }
+
+    public function getReasonPhrase(): string
+    {
+        return $this->reasonPhrase;
+    }
+
+    public function getProtocolVersion(): string
+    {
+        return $this->protocolVersion;
+    }
+
+    public function withProtocolVersion(string $version): ResponseInterface
+    {
+        $new = clone $this;
+        $new->protocolVersion = $version;
+        return $new;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function hasHeader(string $name): bool
+    {
+        return isset($this->headers[$name]);
+    }
+
+    public function getHeaderLine(string $name): string
+    {
+        return $this->headers[$name] ?? '';
+    }
+
+    public function withHeader(string $name, $value): ResponseInterface
+    {
+        $new = clone $this;
+        $new->headers[$name] = (string)$value;
+        return $new;
+    }
+
+    public function withAddedHeader(string $name, $value): ResponseInterface
+    {
+        $new = clone $this;
+        $new->headers[$name] = ($this->headers[$name] ?? '') . ',' . (string) $value;
+        return $new;
+    }
+
+    public function withoutHeader(string $name): ResponseInterface
+    {
+        $new = clone $this;
+        unset($new->headers[$name]);
+        return $new;
+    }
+
+    public function withBody(StreamInterface $body) {}
 }

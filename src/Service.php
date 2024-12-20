@@ -44,7 +44,7 @@ class Service
     /**
      * get 请求
      */
-    public function doGet($path, array $headers, array $querys, $debug = false)
+    public function doGet(string $path, array $headers = [], array $querys = [], $debug = false)
     {
         //域名后、query前的部分
         $request = $this->request($path, HttpMethod::GET);
@@ -62,7 +62,7 @@ class Service
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
         //指定参与签名的header
         $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 $request->setSignHeader($key);
@@ -70,7 +70,7 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }
@@ -82,7 +82,7 @@ class Service
     /**
      * POST  非表单请求 String
      */
-    public function doPostForm($path, $headers, $querys, $bodys, $debug = false)
+    public function doPostForm(string $path, array $headers = [], array $querys = [], array $bodys = [], $debug = false)
     {
         //域名后、query前的部分
         $request = $this->request($path, HttpMethod::POST);
@@ -100,7 +100,7 @@ class Service
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
         //同时指定参与签名的header
         $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 $request->setSignHeader($key);
@@ -108,14 +108,14 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }
         }
 
         //注意：业务body部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($bodys))) {
+        if ($bodys) {
             foreach ($bodys as $key => $node) {
                 $request->setBody($key, $node);
             }
@@ -128,7 +128,7 @@ class Service
     /**
      * POST  非表单请求 String
      */
-    public function doPostString($path, array $headers, array $querys, $bodyContent, $debug = false)
+    public function doPostString(string $path, array $headers = [], array $querys = [], string $bodyContent = '', $debug = false)
     {
         //域名后、query前的部分
         $request = $this->request($path, HttpMethod::POST);
@@ -147,7 +147,7 @@ class Service
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
         $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 $request->setSignHeader($key);
@@ -155,7 +155,7 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }
@@ -175,7 +175,7 @@ class Service
      * @author     :  Wangqs  2021/3/22
      * @description:  POST  非表单请求 Stream
      */
-    public function doPostStream($path, array $headers, array $querys, array $bytes, $bodyContent, $debug = false)
+    public function doPostStream($path, array $headers = [], array $querys = [], array $bytes = [], string $bodyContent='', $debug = false)
     {
         //域名后、query前的部分
         // $path = "/poststream";
@@ -197,7 +197,7 @@ class Service
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
         $request->setSignHeader(SystemHeader::X_CA_TIMESTAMP);
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 $request->setSignHeader($key);
@@ -205,14 +205,14 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }
         }
 
         //注意：业务body部分，不能设置key值，只能有value
-        if (is_array($bytes)) {
+        if ($bytes) {
             foreach ($bytes as $byte) {
                 $bodyContent .= chr($byte);
             }
@@ -231,7 +231,7 @@ class Service
     /**
      *method=DELETE请求示例
      */
-    public function doDelete($path, array $headers, array $querys, $debug = false)
+    public function doDelete($path, array $headers = [], array $querys = [], $debug = false)
     {
         $request =  $this->request($path, HttpMethod::DELETE);
 
@@ -246,7 +246,7 @@ class Service
 
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 //指定参与签名的header
@@ -255,7 +255,7 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }
@@ -268,7 +268,7 @@ class Service
     /**
      *method=HEAD请求示例
      */
-    public function doHead($path, array $headers, array $querys, $debug = false)
+    public function doHead($path, array $headers = [], array $querys = [], $debug = false)
     {
         //域名后、query前的部分
         $request =  $this->request($path, HttpMethod::HEAD);
@@ -284,7 +284,7 @@ class Service
 
         //注意：业务header部分，如果没有则无此行(如果有中文，请做Utf8ToIso88591处理)
         //mb_convert_encoding("headervalue2中文", "ISO-8859-1", "UTF-8");
-        if (is_array($headers)) {
+        if ($headers) {
             foreach ($headers as $key => $node) {
                 $request->setHeader($key, $node);
                 //指定参与签名的header
@@ -293,7 +293,7 @@ class Service
         }
 
         //注意：业务query部分，如果没有则无此行；请不要、不要、不要做UrlEncode处理
-        if ((is_array($querys))) {
+        if ($querys) {
             foreach ($querys as $key => $node) {
                 $request->setQuery($key, $node);
             }

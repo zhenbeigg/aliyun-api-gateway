@@ -159,7 +159,7 @@ class HttpUtil
 
     private static function NewGuid()
     {
-        mt_srand((float)microtime() * 10000);
+        mt_srand((int)round((float)microtime() * 10000));
         $uuid = strtoupper(md5(uniqid(rand(), true)));
         return $uuid;
     }
