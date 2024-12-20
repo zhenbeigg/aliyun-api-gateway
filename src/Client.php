@@ -11,13 +11,13 @@ use Eykj\AliyunApiGateway\Constant\SystemHeader;
 use function Hyperf\Support\env;
 
 /**
- *请求示例
+ *客户端
  *如一个完整的url为http://api.aaaa.com/createobject?key1=value&key2=value2
  *$host为http://api.aaaa.com
  *$path为/createobject
  *query为key1=value&key2=value2
  */
-class Service
+class Client
 {
     private $appKey = "your appKey";
     private $appSecret = "your appSecret";
@@ -175,7 +175,7 @@ class Service
      * @author     :  Wangqs  2021/3/22
      * @description:  POST  非表单请求 Stream
      */
-    public function doPostStream($path, array $headers = [], array $querys = [], array $bytes = [], string $bodyContent='', $debug = false)
+    public function doPostStream($path, array $headers = [], array $querys = [], array $bytes = [], string $bodyContent = '', $debug = false)
     {
         //域名后、query前的部分
         // $path = "/poststream";
