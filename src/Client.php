@@ -8,10 +8,10 @@ use Eykj\AliyunApiGateway\Constant\HttpMethod;
 use Eykj\AliyunApiGateway\Constant\HttpHeader;
 use Eykj\AliyunApiGateway\Constant\ContentType;
 use Eykj\AliyunApiGateway\Constant\SystemHeader;
-use function Hyperf\Support\env;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- *客户端
+ *客户端类
  *如一个完整的url为http://api.aaaa.com/createobject?key1=value&key2=value2
  *$host为http://api.aaaa.com
  *$path为/createobject
@@ -41,6 +41,16 @@ class Client
         return new HttpRequest($this->host, $path, $method, $this->appKey, $this->appSecret);
     }
 
+    /**
+     * 将 ResponseInterface 对象转换为数组
+     *
+     * @param ResponseInterface $response
+     * @return array
+     */
+    protected function responseToArray(ResponseInterface $response): array
+    {
+        return y_json_decode($response->getBody()->getContents());
+    }
     /**
      * get 请求
      */
@@ -75,8 +85,8 @@ class Client
                 $request->setQuery($key, $node);
             }
         }
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 
     /**
@@ -120,8 +130,8 @@ class Client
                 $request->setBody($key, $node);
             }
         }
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 
 
@@ -166,9 +176,8 @@ class Client
             $request->setHeader(HttpHeader::HTTP_HEADER_CONTENT_MD5, base64_encode(md5($bodyContent, true)));
             $request->setBodyString($bodyContent);
         }
-
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 
     /**
@@ -222,8 +231,8 @@ class Client
             $request->setHeader(HttpHeader::HTTP_HEADER_CONTENT_MD5, base64_encode(md5($bodyContent, true)));
             $request->setBodyStream($bodyContent);
         }
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 
     //method=PUT方式和method=POST基本类似，这里不再举例
@@ -260,8 +269,8 @@ class Client
                 $request->setQuery($key, $node);
             }
         }
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 
 
@@ -298,7 +307,7 @@ class Client
                 $request->setQuery($key, $node);
             }
         }
-
-        return HttpClient::execute($request);
+        $response = HttpClient::execute($request);
+        return $this->responseToArray($response);
     }
 }
